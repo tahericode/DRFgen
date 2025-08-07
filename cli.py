@@ -9,7 +9,8 @@ from drfgen.prompts.database import choose_database
 from drfgen.prompts.api_versioning import choose_api_versioning
 from drfgen.prompts.dockerize import ask_dockerize
 from drfgen.core.venv import create_venv, get_pip_path, get_python_path, install_package
-from drfgen.generator.project_builder import run_django_startproject
+from drfgen.generator.project_builder import run_django_startproject, convert_to_advanced_settings
+import subprocess
 
 
 @click.command()
@@ -103,6 +104,8 @@ def start_cli():
     
     install_package(pip_path, f"django=={django_version}")
     
+    install_package(pip_path, "python-dotenv")
+    
     #* STEP10: Run startproject using selected Django version
     run_django_startproject(python_path, project_name, str(project_path))
 
@@ -110,3 +113,13 @@ def start_cli():
         "🎉 Django project initialized successfully!",
         fg="green"
     )
+    
+    #* STEP11: Apply advanced settings if needed
+    if settings_structure == "advanced":
+        convert_to_advanced_settings(project_path, project_name)
+        click.secho("⚙️ Advanced settings applied with .env support", fg="green")
+        
+    #* STEP12: Freeze installed packages to requirements.txt
+    requirements_path = project_path / "requirements.txt"
+    subprocess.run([str(pip_path), "freeze"], stdout=open(requirements_path, "w"))
+    click.secho("📦 requirements.txt generated.", fg="cyan")

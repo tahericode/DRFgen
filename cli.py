@@ -123,3 +123,46 @@ def start_cli():
     requirements_path = project_path / "requirements.txt"
     subprocess.run([str(pip_path), "freeze"], stdout=open(requirements_path, "w"))
     click.secho("📦 requirements.txt generated.", fg="cyan")
+    
+    #* STEP13: Install DRF if enabled
+    if drf_version:
+        install_package(pip_path, f"djangorestframework=={drf_version}")
+        
+        # If selected jwt:
+        # if auth_method == "jwt":
+        #     install_package(pip_path, "djangorestframework-simplejwt")
+        
+        # # Find settings file
+        # if settings_structure == "advanced":
+        #     settings_file = project_path / project_name / "settings" / "base.py"
+        # else:
+        #     settings_file = project_path / project_name / "settings.py"
+        
+        # from drfgen.steps.install_drf import apply_drf_config
+        # apply_drf_config(settings_file, auth_method)
+
+        click.secho("✅ Django REST Framework installed.", fg="green")
+        
+    #* STEP14: Setup Authentication system (including DRF config)
+    if auth_method == "jwt":
+        install_package(pip_path, "djangorestframework-simplejwt")
+        click.secho("✅ Installed SimpleJWT for authentication", fg="green")
+
+    elif auth_method == "oauth2":
+        install_package(pip_path, "django-oauth-toolkit")
+        click.secho("✅ Installed django-oauth-toolkit for OAuth2 support", fg="green")
+
+    elif auth_method == "custom/manual setup...":
+        click.secho("⚠️ Skipping auth setup. You need to configure it manually later.", fg="yellow")
+
+    # Set the settings path
+    if settings_structure == "advanced":
+        settings_file = project_path / project_name / "settings" / "base.py"
+    else:
+        settings_file = project_path / project_name / "settings.py"
+
+    # Apply DRF config regardless of auth type (but pass the method)
+    from drfgen.steps.install_drf import apply_drf_config
+    apply_drf_config(settings_file, auth_method)
+
+    click.secho("✅ DRF & Authentication configured in settings.", fg="cyan")

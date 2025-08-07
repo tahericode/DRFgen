@@ -8,6 +8,8 @@ from drfgen.prompts.settings_structure import choose_settings_structure
 from drfgen.prompts.database import choose_database
 from drfgen.prompts.api_versioning import choose_api_versioning
 from drfgen.prompts.dockerize import ask_dockerize
+from drfgen.core.venv import create_venv, get_pip_path, get_python_path, install_package
+from drfgen.generator.project_builder import run_django_startproject
 
 
 @click.command()
@@ -91,3 +93,20 @@ def start_cli():
         click.secho("✅ The project will be Dockerized.", fg="green")
     else:
         click.secho("🚫 The project is built without Docker.", fg="yellow")
+        
+    #* STEP9: Create final virtualenv & install Dajgno
+    venv_path = project_path / "venv"
+    create_venv(str(venv_path))
+    
+    pip_path = get_pip_path(str(venv_path))
+    python_path = get_python_path(str(venv_path))
+    
+    install_package(pip_path, f"django=={django_version}")
+    
+    #* STEP10: Run startproject using selected Django version
+    run_django_startproject(python_path, project_name, str(project_path))
+
+    click.secho(
+        "🎉 Django project initialized successfully!",
+        fg="green"
+    )

@@ -7,6 +7,7 @@ from drfgen.prompts.auth_method import choose_auth_method
 from drfgen.prompts.settings_structure import choose_settings_structure
 from drfgen.prompts.database import choose_database
 from drfgen.prompts.api_versioning import choose_api_versioning
+from drfgen.prompts.dockerize import ask_dockerize
 
 
 @click.command()
@@ -83,3 +84,10 @@ def start_cli():
             "📁 No versioning: Paths will be directly in /api/...",
             fg="yellow"
         )
+        
+    #* STEP8: Ask about dockerize
+    dockerize = ask_dockerize()
+    if dockerize:
+        click.secho("✅ The project will be Dockerized.", fg="green")
+    else:
+        click.secho("🚫 The project is built without Docker.", fg="yellow")

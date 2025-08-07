@@ -4,6 +4,7 @@ import click
 from drfgen.prompts.django_version import choose_django_version
 from drfgen.prompts.drf_version import choose_drf
 from drfgen.prompts.auth_method import choose_auth_method
+from drfgen.prompts.settings_structure import choose_settings_structure
 
 
 @click.command()
@@ -52,5 +53,12 @@ def start_cli():
     if auth_method:
         click.secho(f"Selected Authentication method: {auth_method}", fg="blue")
     else:
-        click.secho("Authentication not active", fg="yellow")    
+        click.secho("Authentication not active", fg="yellow")
+        
+    #* STEP5: Choose Settings structure    
+    settings_structure = choose_settings_structure()
+    click.secho(
+        f" Selected settings structure : {settings_structure}",
+        fg="magenta"
+        )
     

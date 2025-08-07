@@ -5,6 +5,7 @@ from drfgen.prompts.django_version import choose_django_version
 from drfgen.prompts.drf_version import choose_drf
 from drfgen.prompts.auth_method import choose_auth_method
 from drfgen.prompts.settings_structure import choose_settings_structure
+from drfgen.prompts.database import choose_database
 
 
 @click.command()
@@ -60,5 +61,12 @@ def start_cli():
     click.secho(
         f" Selected settings structure : {settings_structure}",
         fg="magenta"
+        )
+    
+    #* STEP6: Choose Database
+    database = choose_database()
+    click.secho(
+        f" Selected database : {database}",
+        fg="bright_blue"
         )
     

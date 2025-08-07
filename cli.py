@@ -3,6 +3,7 @@ from pathlib import Path
 import click
 from drfgen.prompts.django_version import choose_django_version
 from drfgen.prompts.drf_version import choose_drf
+from drfgen.prompts.auth_method import choose_auth_method
 
 
 @click.command()
@@ -44,5 +45,12 @@ def start_cli():
     if drf_version:
         click.secho(f"✅ DRF was activated with version: {drf_version}", fg="green")
     else:
-        click.secho(f"🚫 DRF not activated", fg="yellow")    
+        click.secho(f"🚫 DRF not activated", fg="yellow")
+        
+    #* STEP4: Choose Authentication method
+    auth_method = choose_auth_method()
+    if auth_method:
+        click.secho(f"Selected Authentication method: {auth_method}", fg="blue")
+    else:
+        click.secho("Authentication not active", fg="yellow")    
     

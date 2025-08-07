@@ -6,6 +6,7 @@ from drfgen.prompts.drf_version import choose_drf
 from drfgen.prompts.auth_method import choose_auth_method
 from drfgen.prompts.settings_structure import choose_settings_structure
 from drfgen.prompts.database import choose_database
+from drfgen.prompts.api_versioning import choose_api_versioning
 
 
 @click.command()
@@ -70,3 +71,15 @@ def start_cli():
         fg="bright_blue"
         )
     
+    #* STEP7: Choose API versioning
+    api_versioned = choose_api_versioning()
+    if api_versioned:
+        click.secho(
+            "📌 API versioning enabled: paths will be like /api/v1/...",
+            fg="cyan"
+        )
+    else:
+        click.secho(
+            "📁 No versioning: Paths will be directly in /api/...",
+            fg="yellow"
+        )

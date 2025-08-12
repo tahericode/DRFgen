@@ -80,28 +80,100 @@ class Command(BaseCommand):
         app_path.mkdir()
 
         if structure == "simple":
-            for fname in ['views.py', 'models.py', 'urls.py', '__init__.py']:
+            for fname in ['views.py', 'models.py', 'serializers.py', 'urls.py', '__init__.py', 'admin.py', 'apps.py', 'tests.py']:
                 (app_path / fname).touch()
-        else:
-            for folder in ['views', 'serializers', 'models', 'urls']:
-                folder_path = app_path / folder
-                folder_path.mkdir()
-                (folder_path / '__init__.py').touch()
-
-                if api_versioning:
-                    v1_path = folder_path / 'v1'
-                    v1_path.mkdir()
-                    (v1_path / '__init__.py').touch()
-
-            apps_py = app_path / 'apps.py'
             
+            apps_py = app_path / 'apps.py'
             apps_py.write_text(f'''from django.apps import AppConfig
 
 class {app_name.capitalize()}Config(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = '{app_name}'
-''')
+''')        
+            models_py = app_path / 'models.py'
+            models_py.write_text('from django.db import models')
             
+            admin_py = app_path / 'admin.py'
+            admin_py.write_text('from django.contrib import admin')
+            
+            urls_py = app_path / 'urls.py'
+            urls_py_content = '''\
+from django.urls import path\n
+
+urlpatterns = []
+'''
+                    urls_py.write_text(urls_py_content)
+            
+            migrations_path = app_path / "migrations"
+            migrations_path.mkdir(parents=True, exist_ok=True)
+            (migrations_path /'__init__.py').touch()
+        else:
+            for folder in ['api', 'models', 'migrations', 'utils']:
+                folder_path = app_path / folder
+                folder_path.mkdir()
+                (folder_path / '__init__.py').touch()
+
+            if api_versioning:
+                api_path = app_path / 'api'
+                
+                version_api_path = api_path /'v1'
+
+                for folder in ['views', 'serializers']:
+                    folder_path = version_api_path / folder
+                    folder_path.mkdir(parents=True, exist_ok=True)
+                    folder_init_py = folder_path / '__init__.py'
+                    folder_init_py.touch()
+                    content = '''\
+# STEP1: import all (views - serializers) that write in files of this folder
+# STEP2: fill in __all__ array with strings of (views - serializers) name that imported \n
+__all__ = []
+'''
+                    folder_init_py.write_text(content)
+                    urls_py = version_api_path / 'urls.py'
+                    urls_py.touch()
+            
+            for fname in ['serializers.py', 'views.py', 'apps.py', 'tests.py','admin.py', 'urls.py']:
+                f_py = app_path / fname
+                f_py.touch()
+                
+                if fname == 'serializers.py':
+                    content = '''\
+from {app_name}.api.v1.serializers import * 
+from {app_name}.api.v1.serializers import __all__
+'''
+                    f_py.write_text(content)
+                    
+                    
+                elif fname == 'views.py':
+                    content = f'''\
+from {app_name}.api.v1.views import * 
+from {app_name}.api.v1.views import __all__
+'''             
+                    f_py.write_text(content)
+                    
+                    
+                elif fname == 'apps.py':
+                    apps_py = app_path / 'apps.py'
+                    apps_py.write_text(f'''from django.apps import AppConfig
+
+class {app_name.capitalize()}Config(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = '{app_name}'
+''')            
+
+
+                elif fname == 'admin.py':
+                    f_py.write_text('from django.contrib import admin')
+                    
+                    
+                elif fname == 'urls.py':
+                    urls_py_content = '''\
+from django.urls import path\n
+
+urlpatterns = []
+'''
+                    f_py.write_text(urls_py_content)
+
             (app_path / '__init__.py').touch()
 
         if structure == "advanced":

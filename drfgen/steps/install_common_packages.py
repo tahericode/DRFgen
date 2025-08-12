@@ -4,7 +4,7 @@ from drfgen.core.venv import install_package
 def install_common_packages(pip_path, database_choice, settings_file, env_path):
     
     default_packages = [
-        "pillow",
+        # "pillow",
         "django-cors-headers",
         "django-filter"
     ]

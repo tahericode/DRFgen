@@ -24,6 +24,22 @@ def convert_to_advanced_settings(
     base_settings = settings_path / "base.py"
     if default_settings_path.exists():
         shutil.move(str(default_settings_path), str(base_settings))
+        
+    # 2.1. Fix BASE_DIR in base.py
+    base_content = base_settings.read_text()
+    
+    import re
+    if "BASE_DIR" in base_content:
+        base_content = re.sub(
+            r'BASE_DIR\s*=\s*Path\(.*\)',
+            "BASE_DIR = Path(__file__).resolve().parent.parent.parent",
+            base_content
+        )
+    else:
+        base_content = "from pathlib import Path\n\nBASE_DIR = Path(__file__).resolve().parent.parent.parent\n\n" + base_content
+
+    base_settings.write_text(base_content)
+
 
     # 3. Create __init__.py in settings/
     (settings_path / "__init__.py").touch()

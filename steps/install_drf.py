@@ -11,7 +11,7 @@ def apply_drf_config(settings_file: Path, auth_method: str):
         )
         
     # If OAuth2 is selected, ensure 'oauth2_provider' is in INSTALLED_APPS
-    if auth_method.lower() == "oauth2" and "'oauth2_provider'" not in content:
+    if auth_method == "oauth2" and "'oauth2_provider'" not in content:
         content = content.replace(
             "INSTALLED_APPS = [",
             "INSTALLED_APPS = [\n    'oauth2_provider',"

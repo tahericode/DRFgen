@@ -1,10 +1,6 @@
 import questionary
 
 def choose_auth_method():
-    use_auth = questionary.confirm("🔐 Do you need authentication? ").ask()
-    
-    if not use_auth:
-        return None
     
     methods = [
         "JWT",

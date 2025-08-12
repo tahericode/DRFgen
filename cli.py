@@ -8,9 +8,14 @@ from drfgen.prompts.settings_structure import choose_settings_structure
 from drfgen.prompts.database import choose_database
 from drfgen.prompts.api_versioning import choose_api_versioning
 from drfgen.prompts.dockerize import ask_dockerize
+from drfgen.prompts.swagger import choose_swagger
 from drfgen.core.venv import create_venv, get_pip_path, get_python_path, install_package
 from drfgen.generator.project_builder import run_django_startproject, convert_to_advanced_settings
 import subprocess
+from drfgen.steps.swagger import apply_spectacular_config
+from drfgen.steps.install_common_packages import install_common_packages
+from drfgen.steps.save_config import save_drfgen_config
+from drfgen.steps.custom_drfgen_startapp import drfgen_startapp
 
 
 @click.command()
@@ -54,6 +59,14 @@ def start_cli():
     else:
         click.secho(f"🚫 DRF not activated", fg="yellow")
         
+    #* STEP3-1: Choose Swagger
+    # Ask if Swagger / API Docs should be installed
+    swagger_tool = choose_swagger()
+    if swagger_tool:
+        click.secho(f"Selected swagger tool: {swagger_tool}", fg="blue")
+    else:
+        click.secho("Swagger not active", fg="yellow")
+    
     #* STEP4: Choose Authentication method
     auth_method = choose_auth_method()
     if auth_method:
@@ -166,3 +179,50 @@ def start_cli():
     apply_drf_config(settings_file, auth_method)
 
     click.secho("✅ DRF & Authentication configured in settings.", fg="cyan")
+    
+    #* STEP15: Swagger / API Documentation
+    if swagger_tool and drf_version:
+        if swagger_tool == "drf-spectacular":
+            install_package(pip_path, "drf-spectacular")
+
+            
+            apply_spectacular_config(project_path, project_name, settings_structure)
+
+            click.secho("✅ drf-spectacular installed and configured!", fg="green")
+
+        elif swagger_tool == "drf-yasg":
+            install_package(pip_path, "drf-yasg")
+
+            from drfgen.steps.swagger import apply_yasg_config
+            apply_yasg_config(project_path, project_name, settings_structure)
+
+            click.secho("✅ drf-yasg installed and configured!", fg="green")
+
+        else:
+            click.secho("🚫 Swagger tool not selected, skipping.", fg="yellow")
+            
+    #* STEP16: Install default Django packages
+    env_path = project_path / ".env"
+    install_common_packages(pip_path, database, settings_file, env_path)
+    click.secho("📦 Default Django packages installed & configured!", fg="green")
+    
+    
+    #* STEP17: Create drfgen_config.json for save options that user selected
+    save_drfgen_config(
+        project_path=project_path,
+        project_name=project_name,
+        django_version=django_version,
+        drf_version=drf_version,
+        swagger_tool=swagger_tool,
+        auth_method=auth_method,
+        settings_structure=settings_structure,
+        database=database,
+        api_versioned=api_versioned,
+        dockerize=dockerize
+    )
+    click.secho("💾 drfgen_config.json saved with project settings!", fg="green")
+    
+    #* STEP18: Generate custom drfgen_startapp command
+    drfgen_startapp(project_path, project_name)
+    click.secho("🛠 Custom management command 'drfgen_startapp' created!", fg="green")
+    

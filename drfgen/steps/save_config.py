@@ -11,7 +11,7 @@ def save_drfgen_config(
     settings_structure: str,
     database: str,
     api_versioned: bool,
-    dockerize: bool
+    dockerize: bool = False
 ):
     config_data = {
         "project_name": project_name,

@@ -7,7 +7,7 @@ from drfgen.prompts.auth_method import choose_auth_method
 from drfgen.prompts.settings_structure import choose_settings_structure
 from drfgen.prompts.database import choose_database
 from drfgen.prompts.api_versioning import choose_api_versioning
-from drfgen.prompts.dockerize import ask_dockerize
+# from drfgen.prompts.dockerize import ask_dockerize
 from drfgen.prompts.swagger import choose_swagger
 from drfgen.core.venv import create_venv, get_pip_path, get_python_path, install_package
 from drfgen.generator.project_builder import run_django_startproject, convert_to_advanced_settings
@@ -102,11 +102,11 @@ def start_cli():
         )
         
     #* STEP8: Ask about dockerize
-    dockerize = ask_dockerize()
-    if dockerize:
-        click.secho("✅ The project will be Dockerized.", fg="green")
-    else:
-        click.secho("🚫 The project is built without Docker.", fg="yellow")
+    # dockerize = ask_dockerize()
+    # if dockerize:
+    #     click.secho("✅ The project will be Dockerized.", fg="green")
+    # else:
+    #     click.secho("🚫 The project is built without Docker.", fg="yellow")
         
     #* STEP9: Create final virtualenv & install Dajgno
     venv_path = project_path / "venv"
@@ -133,9 +133,9 @@ def start_cli():
         click.secho("⚙️ Advanced settings applied with .env support", fg="green")
         
     #* STEP12: Freeze installed packages to requirements.txt
-    requirements_path = project_path / "requirements.txt"
-    subprocess.run([str(pip_path), "freeze"], stdout=open(requirements_path, "w"))
-    click.secho("📦 requirements.txt generated.", fg="cyan")
+    # requirements_path = project_path / "requirements.txt"
+    # subprocess.run([str(pip_path), "freeze"], stdout=open(requirements_path, "w"))
+    # click.secho("📦 requirements.txt generated.", fg="cyan")
     
     #* STEP13: Install DRF if enabled
     if drf_version:
@@ -207,6 +207,12 @@ def start_cli():
     click.secho("📦 Default Django packages installed & configured!", fg="green")
     
     
+    #* STEP16-2: Freeze installed packages to requirements.txt
+    requirements_path = project_path / "requirements.txt"
+    subprocess.run([str(pip_path), "freeze"], stdout=open(requirements_path, "w"))
+    click.secho("📦 requirements.txt generated.", fg="cyan")
+    
+    
     #* STEP17: Create drfgen_config.json for save options that user selected
     save_drfgen_config(
         project_path=project_path,
@@ -218,7 +224,7 @@ def start_cli():
         settings_structure=settings_structure,
         database=database,
         api_versioned=api_versioned,
-        dockerize=dockerize
+        # dockerize=dockerize
     )
     click.secho("💾 drfgen_config.json saved with project settings!", fg="green")
     

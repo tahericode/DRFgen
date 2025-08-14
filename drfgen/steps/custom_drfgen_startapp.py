@@ -102,7 +102,7 @@ from django.urls import path\n
 
 urlpatterns = []
 '''
-                    urls_py.write_text(urls_py_content)
+            urls_py.write_text(urls_py_content)
             
             migrations_path = app_path / "migrations"
             migrations_path.mkdir(parents=True, exist_ok=True)
@@ -117,20 +117,22 @@ urlpatterns = []
                 api_path = app_path / 'api'
                 
                 version_api_path = api_path /'v1'
+            else:
+                version_api_path = api_path 
 
-                for folder in ['views', 'serializers']:
-                    folder_path = version_api_path / folder
-                    folder_path.mkdir(parents=True, exist_ok=True)
-                    folder_init_py = folder_path / '__init__.py'
-                    folder_init_py.touch()
-                    content = '''\
+            for folder in ['views', 'serializers']:
+                folder_path = version_api_path / folder
+                folder_path.mkdir(parents=True, exist_ok=True)
+                folder_init_py = folder_path / '__init__.py'
+                folder_init_py.touch()
+                content = '''\
 # STEP1: import all (views - serializers) that write in files of this folder
 # STEP2: fill in __all__ array with strings of (views - serializers) name that imported \n
 __all__ = []
 '''
-                    folder_init_py.write_text(content)
-                    urls_py = version_api_path / 'urls.py'
-                    urls_py.touch()
+                folder_init_py.write_text(content)
+                urls_py = version_api_path / 'urls.py'
+                urls_py.touch()
             
             for fname in ['serializers.py', 'views.py', 'apps.py', 'tests.py','admin.py', 'urls.py']:
                 f_py = app_path / fname

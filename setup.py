@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="drfgen",
-    version="0.1.3",
+    version="0.2.0",
     author="Mohammadreza Taheri",
     author_email="mrtcode2@gmail.com",
     description="A CLI tool to bootstrap Django REST Framework projects quickly and easily.",

@@ -232,3 +232,11 @@ def start_cli():
     drfgen_startapp(project_path, project_name)
     click.secho("🛠 Custom management command 'drfgen_startapp' created!", fg="green")
     
+    
+    #* STEP19: Create .gitignore file
+    from drfgen.steps.create_gitignore import create_gitignore
+    created = create_gitignore(project_path)
+    if created:
+        click.secho("🗂 .gitignore created!", fg="green")
+    else:
+        click.secho("🗂 .gitignore already exists, skipping.", fg="yellow")

@@ -133,13 +133,20 @@ __all__ = []
                 folder_init_py.write_text(content)
                 urls_py = version_api_path / 'urls.py'
                 urls_py.touch()
+                
+                urls_py_content = '''\
+from django.urls import path\n
+
+urlpatterns = []
+'''
+                    urls_py.write_text(urls_py_content)
             
             for fname in ['serializers.py', 'views.py', 'apps.py', 'tests.py','admin.py', 'urls.py']:
                 f_py = app_path / fname
                 f_py.touch()
                 
                 if fname == 'serializers.py':
-                    content = '''\
+                    content = f'''\
 from {app_name}.api.v1.serializers import * 
 from {app_name}.api.v1.serializers import __all__
 '''

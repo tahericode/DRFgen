@@ -20,6 +20,7 @@ def apply_drf_config(settings_file: Path, auth_method: str):
     if "REST_FRAMEWORK" not in content:
         drf_settings = f"""
 # Django REST Framework Settings
+
 REST_FRAMEWORK = {{
     'DEFAULT_AUTHENTICATION_CLASSES': [
         '{get_auth_backend(auth_method)}',
@@ -28,6 +29,13 @@ REST_FRAMEWORK = {{
         'rest_framework.permissions.IsAuthenticated',
     ],
 }}
+"""
+
+        if auth_method == "custom/manual setup...":
+            drf_settings = """
+# Django REST Framework Settings
+
+REST_FRAMEWORK = {}
 """
         content += "\n" + drf_settings
 
